@@ -37,7 +37,7 @@ export default function CrewScene({ motion = true }: { motion?: boolean }) {
     webgl.toneMapping = THREE.ACESFilmicToneMapping;
     webgl.toneMappingExposure = 1.15;
     webgl.shadowMap.enabled = true;
-    webgl.shadowMap.type = THREE.PCFSoftShadowMap;
+    webgl.shadowMap.type = THREE.PCFShadowMap;
     webgl.domElement.setAttribute("aria-hidden", "true");
     viewport.appendChild(webgl.domElement);
 
