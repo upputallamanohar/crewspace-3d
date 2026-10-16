@@ -15,70 +15,11 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Check out source
         uses: actions/checkout@v7
         with:
-          ref: main
-
-      - name: Import original React source once
-        shell: bash
-        env:
-          SOURCE_ARCHIVE_URL: https://wav-sales-notre-cancer.trycloudflare.com/crewspace-source.zip
-        run: |
-          if [ ! -f app/page.tsx ]; then
-            curl --fail --show-error --silent --location \
-              --proto '=https' --proto-redir '=https' --tlsv1.2 \
-              --connect-timeout 15 --max-time 60 --max-filesize 2000000 \
-              "$SOURCE_ARCHIVE_URL" --output crewspace-source.zip
-            printf '%s  %s\n' '4dd5cc66d9e3cc2da75828f67b9493f0e941d8ca4ad97836c1a8e3f73d274d53' 'crewspace-source.zip' | sha256sum --check --strict
-            python3 - <<'PY'
-          import os
-          import pathlib
-          import stat
-          import subprocess
-          import zipfile
-
-          root = pathlib.Path.cwd().resolve()
-          blocked = {'.git', '.github', '.env', 'node_modules', '.next', '.vinext', '.wrangler', '.sites-runtime', '.agents', '.codex', '.test-cache', 'outputs', 'work'}
-          with zipfile.ZipFile('crewspace-source.zip') as archive:
-              entries = []
-              total = 0
-              for item in archive.infolist():
-                  parts = pathlib.PurePosixPath(item.filename).parts
-                  if not parts or parts[0] != 'crewspace' or len(parts) < 2:
-                      raise ValueError('Unexpected archive prefix')
-                  relative = pathlib.PurePosixPath(*parts[1:])
-                  if any(part in blocked or part in ('..', '.') or part.startswith('.env') for part in relative.parts):
-                      raise ValueError('Unsafe archive path')
-                  if stat.S_ISLNK(item.external_attr >> 16) or relative.is_absolute() or '\\' in str(relative):
-                      raise ValueError('Unsafe archive entry')
-                  target = (root / str(relative)).resolve()
-                  if os.path.commonpath([str(root), str(target)]) != str(root):
-                      raise ValueError('Archive path escapes checkout')
-                  total += item.file_size
-                  if total > 20000000:
-                      raise ValueError('Archive is unexpectedly large')
-                  if not item.is_dir():
-                      if target.exists() and str(relative) != 'README.md':
-                          raise ValueError('Refusing to overwrite an existing source file: ' + str(relative))
-                      entries.append((item, relative, target))
-              required = {'app/page.tsx', 'package.json', 'package-lock.json', 'scripts/build-standalone.mjs', 'components/standalone.tsx', 'tests/workflow-tests.mjs'}
-              if not required.issubset({str(relative) for _, relative, _ in entries}):
-                  raise ValueError('Source archive is incomplete')
-              for item, relative, target in entries:
-                  target.parent.mkdir(parents=True, exist_ok=True)
-                  target.write_bytes(archive.read(item))
-          subprocess.run(['git', 'config', 'user.name', 'github-actions[bot]'], check=True)
-          subprocess.run(['git', 'config', 'user.email', '41898282+github-actions[bot]@users.noreply.github.com'], check=True)
-          subprocess.run(['git', 'add', '-f', '--'] + [str(relative) for _, relative, _ in entries], check=True)
-          subprocess.run(['git', 'commit', '-m', 'Add original React and Node.js source'], check=True)
-          subprocess.run(['git', 'push', 'origin', 'HEAD:main'], check=True)
-          print('Imported and committed', len(entries), 'source files.')
-          PY
-          fi
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
