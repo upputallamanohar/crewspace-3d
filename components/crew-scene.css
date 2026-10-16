@@ -1,0 +1,52 @@
+.crew-scene {
+  --cs-turn-x: 0deg;
+  --cs-turn-y: 0deg;
+  width: 100%;
+  height: 550px;
+  min-width: 0;
+  position: relative;
+  isolation: isolate;
+  color: #252420;
+  user-select: none;
+  touch-action: pan-y;
+  cursor: grab;
+  -webkit-tap-highlight-color: transparent;
+}
+.crew-scene[data-dragging="true"] { cursor: grabbing; }
+.crew-scene:focus-visible { outline: 2px dashed #4556fa; outline-offset: 5px; border-radius: 32px; }
+.cs-color-wash { position: absolute; width: 90%; height: 84%; left: 5%; top: 5%; background: radial-gradient(ellipse, #f0dfed66 0, #ffdeba33 40%, transparent 69%); border-radius: 50%; z-index: -1; }
+.cs-ground-shadow { position: absolute; width: 62%; height: 35px; bottom: 51px; left: 19%; border-radius: 50%; background: radial-gradient(ellipse, #6e609c20, transparent 68%); filter: blur(8px); }
+.cs-webgl { position: absolute; inset: 0; opacity: 0; transition: opacity 350ms ease; }
+.cs-webgl canvas { width: 100%; height: 100%; display: block; }
+.crew-scene[data-renderer="webgl"] .cs-webgl { opacity: 1; }
+.cs-fallback { position: absolute; inset: 0; perspective: 900px; transition: opacity 200ms ease; }
+.crew-scene[data-renderer="webgl"] .cs-fallback { opacity: 0; visibility: hidden; }
+.cs-fallback-world { position: absolute; inset: 9%; transform-style: preserve-3d; transform: rotateX(var(--cs-turn-x)) rotateY(var(--cs-turn-y)); }
+.cs-fallback-core { position: absolute; inset: 15%; transform-style: preserve-3d; transform: rotateX(-18deg) rotateY(-25deg); animation: cs-sculpture-spin 22s linear infinite; }
+.cs-fallback-core > i { position: absolute; inset: 0; display: block; border: 36px solid #4556fa; border-left-color: #6a79ff; border-right-color: #2938c7; border-bottom-color: #3339a6; border-radius: 45%; box-shadow: inset 4px 5px 8px #1c217888, 3px 4px 5px #1d234a22, inset -4px -3px 1px #8894ff; transform: rotateX(60deg); }
+.cs-fallback-core > i:nth-child(2) { transform: rotateY(60deg) rotateZ(60deg); }
+.cs-fallback-core > i:nth-child(3) { transform: rotateX(-60deg) rotateZ(-60deg); }
+.cs-fallback-orbit { position: absolute; inset: 2%; border: 1px solid #ff9f7b; border-radius: 50%; transform: rotateX(30deg) rotateY(-27deg) rotateZ(-30deg); }
+.cs-fallback-sphere { position: absolute; border-radius: 50%; box-shadow: inset -10px -15px 24px #301e4322, 0 20px 20px -20px #31215066; animation: cs-satellite-bob 4.5s ease-in-out infinite; }
+.cs-fallback-orange { width: 16%; aspect-ratio: 1; left: 1%; top: 15%; background: radial-gradient(circle at 29% 24%, #ffbc99 0, #ff623d 37%, #d73b2a 90%); }
+.cs-fallback-yellow { width: 12%; aspect-ratio: 1; right: 5%; top: 9%; background: radial-gradient(circle at 29% 24%, #fffce9 0, #ffe795 44%, #d9b74b); animation-delay: -1.8s; }
+.cs-fallback-mint { width: 15%; aspect-ratio: 1; left: 8%; bottom: 13%; background: linear-gradient(145deg, #e7ffe0, #a0d998 70%, #79ae70); border-radius: 24%; transform: rotate(-25deg); animation-delay: -2.4s; }
+.cs-fallback-lilac { width: 8%; aspect-ratio: 1; left: 48%; top: -2%; background: radial-gradient(circle at 29% 24%, #f1eaff, #b29ae9 70%); animation-delay: -3s; }
+.cs-fallback-mini-ring { width: 20%; aspect-ratio: 1; position: absolute; right: 1%; bottom: 14%; border: 17px solid #ff623d; border-top-color: #ffa685; border-left-color: #ff8258; border-bottom-color: #d33c20; border-radius: 50%; transform: rotateX(35deg) rotateY(-25deg); box-shadow: 3px 5px 0 #f0ab82; animation: cs-ring-roll 7s ease-in-out infinite; }
+.cs-idea-sticker { position: absolute; left: 1%; top: 12%; display: flex; align-items: center; gap: 8px; background: #fffdf4; border: 1px solid #e4ddd1; padding: 9px 13px; border-radius: 30px; font-size: 9px; font-weight: 800; letter-spacing: 1px; transform: rotate(-8deg); box-shadow: 0 5px 14px #54432808; pointer-events: none; }
+.cs-idea-sticker > span { font-size: 23px; line-height: 1; color: #ff623d; animation: cs-flower-spin 24s linear infinite; }
+.cs-project-sticker { position: absolute; right: 0; bottom: 10%; display: flex; align-items: center; gap: 9px; padding: 13px 16px; border: 1px solid #e7d185; border-radius: 16px; background: #ffe795; box-shadow: 3px 5px 0 #322c2410; transform: rotate(7deg); animation: cs-sticker-bob 6s ease-in-out infinite; pointer-events: none; }
+.cs-project-sticker > span { font-size: 42px; line-height: .95; font-weight: 900; letter-spacing: -3px; }
+.cs-project-sticker > div { font-size: 10px; font-weight: 700; line-height: 1.5; }
+.cs-drag-hint { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); display: flex; align-items: center; gap: 7px; color: #7a756c; font-size: 8px; letter-spacing: 1.5px; font-weight: 700; white-space: nowrap; pointer-events: none; }
+.cs-drag-hint > span { display: inline-flex; align-items: center; justify-content: center; width: 25px; height: 25px; border: 1px solid #e4ddd1; border-radius: 50%; color: #4556fa; font-size: 16px; }
+.crew-scene[data-motion="off"] *, .crew-scene[data-motion="off"] *::before { animation-play-state: paused !important; }
+@keyframes cs-sculpture-spin { to { transform: rotateX(342deg) rotateY(335deg); } }
+@keyframes cs-satellite-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -18px; } }
+@keyframes cs-ring-roll { 0%, 100% { transform: rotateX(35deg) rotateY(-25deg) rotateZ(0deg); translate: 0 0; } 50% { transform: rotateX(15deg) rotateY(25deg) rotateZ(18deg); translate: 0 -13px; } }
+@keyframes cs-flower-spin { to { transform: rotate(360deg); } }
+@keyframes cs-sticker-bob { 0%, 100% { transform: translateY(0) rotate(7deg); } 50% { transform: translateY(-9px) rotate(3deg); } }
+@media (max-width: 1200px) { .crew-scene { height: 490px; } .cs-idea-sticker { left: 0; top: 10%; font-size: 8px; } .cs-project-sticker { right: 0; } }
+@media (max-width: 760px) { .crew-scene { max-width: 540px; height: 450px; margin: 0 auto; } }
+@media (max-width: 480px) { .crew-scene { height: 340px; } .cs-fallback-core > i { border-width: 25px; } .cs-fallback-mini-ring { border-width: 12px; } .cs-idea-sticker { padding: 6px 9px; font-size: 7px; top: 8%; gap: 5px; } .cs-idea-sticker > span { font-size: 17px; } .cs-project-sticker { bottom: 12%; padding: 10px 12px; gap: 8px; border-radius: 12px; } .cs-project-sticker > span { font-size: 31px; } .cs-project-sticker > div { font-size: 8px; } .cs-ground-shadow { bottom: 32px; } .cs-drag-hint { bottom: 0; font-size: 7px; } }
+@media (prefers-reduced-motion: reduce) { .crew-scene *, .crew-scene *::before { animation: none !important; transition: none !important; } }
